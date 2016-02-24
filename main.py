@@ -38,6 +38,12 @@ def logger_config():
 
     return logger
 
+
+def generate_error_message(msg,logger):
+    logger.info(str(msg)+"\n\n")
+    traceback.print_exc()
+    logger.info(traceback.format_exc())
+
 def hash_file(file_path):
     """This method hash the file and return the tupple (hexified_key, hexified_hmac)"""
 
@@ -70,9 +76,7 @@ def hash_file(file_path):
         hexified_hmac = hashed.hexdigest()
 
     except Exception:
-        logger.info("Error while processing the file\n\n")
-        traceback.print_exc()
-        logger.info(traceback.format_exc())
+        generate_error_message("Error while hashing the file",logger)
 
     return tuple(hexified_key, hexified_hmac)
 
@@ -81,7 +85,13 @@ def read_config_file():
     """This method reads the configuration file.
     The configuration file must be in the same directory."""
 
-    config_file = open(str(app_name)+".properties",'r')
+    logger = logger_config()
+
+    try:
+        config_file = open(str(app_name)+".properties", 'r')
+
+    except Exception:
+        generate_error_message("Error while reading the properties file", logger)
 
 if __name__ == "__main__":
 
