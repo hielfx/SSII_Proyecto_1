@@ -7,15 +7,16 @@ import hmac
 import logging
 import traceback
 import os
-import codecs
-import datetime
 import binascii
 
+app_name = "py_hids_app"
 
-def hash_file(file_path):
+
+def logger_config():
+    """This methods configure the logger object to our own purpose"""
 
     #Logger configuration
-    logger = logging.getLogger('py_hids_app')
+    logger = logging.getLogger(app_name)
     logger.setLevel(logging.DEBUG)
 
     # create file handler which logs even debug messages
@@ -35,14 +36,21 @@ def hash_file(file_path):
     logger.addHandler(fh)
     logger.addHandler(ch)
 
-    logger.info("Started execution...")
+    return logger
 
+def hash_file(file_path):
+    """This method hash the file and return the tupple (hexified_key, hexified_hmac)"""
+
+    logger = logger_config()
+
+    logger.info("Generating random key...")
     # Generate a random key with 8 bytes (64 bits)
     key = os.urandom(8)
     logger.debug("Random generated key: " + str(key))
-    logger.debug("Hexified key: "+str(binascii.hexlify(key)))
+    hexified_key = binascii.hexlify(key)
+    logger.debug("Hexified key: "+str(hexified_key))
 
-    result = ""
+    hexified_hmac = ""
 
     try:
 
@@ -59,14 +67,21 @@ def hash_file(file_path):
             hashed.update(line.encode('utf-8'))
 
         logger.info("Generated HMAC: " + str(hashed.hexdigest()+"\n\n"))
-        result = hashed.hexdigest()
+        hexified_hmac = hashed.hexdigest()
 
     except Exception:
         logger.info("Error while processing the file\n\n")
         traceback.print_exc()
         logger.info(traceback.format_exc())
 
-    return result
+    return tuple(hexified_key, hexified_hmac)
+
+
+def read_config_file():
+    """This method reads the configuration file.
+    The configuration file must be in the same directory."""
+
+    config_file = open(str(app_name)+".properties",'r')
 
 if __name__ == "__main__":
 
