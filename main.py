@@ -82,9 +82,73 @@ def main_method(app_name="py_hids_app"):
             exception = True
 
         if not exception:
-            return tuple([hexified_key, hexified_hmac])
+            return tuple([key, hexified_hmac])
         else:
             return None
+
+    def get_cursor():
+
+        cursor = None
+        try:
+            #we check if the table exist. If the table doesn't exist we create it.
+            check_table = "SELECT * FROM sqlite_master WHERE name ='{0}' and type='table';".format(app_name)
+            logger.debug("Check table statement: "+check_table)
+            cursor = conn.execute(check_table)
+            logger.info("Checking if the table {0} exists...".format(app_name))
+            # If cursor.fetch() is None means that the table desn't exist, so we have to create it.
+            if cursor.fetchone() is None:
+                # We create the create_table script
+                logger.info("The table {0} doesn't exists. Creating table...".format(app_name))
+                create_table = "CREATE TABLE {0} (id INTEGER PRIMARY KEY AUTOINCREMENT, path TEXT UNIQUE, hex_key TEXT, hex_hmac TEXT);".format(app_name)
+                conn.execute(create_table)
+                # We commit the changes
+                conn.commit()
+                logger.info("Table '{0}' created correctly".format(app_name))
+            else:
+                logger.info("The table {0} already exists".format(app_name))
+        except Exception:
+            generate_error_message("Error while connecting to the database.")
+
+        # We check if the path is already in the db.
+        # If the path is in the db, we hash it and compare with the one in the db.
+        # If not, we hash it and insert it into the db.
+        select = "SELECT hex_key,hex_hmac FROM {0} where path=?;".format(app_name)
+        c = f.path
+        try:
+            logger.info("Checking if the path '{0}' exists in the db...".format(c))
+            cursor = conn.execute(select, (c,))
+            # logger.info("Select statement executed correctly")
+        except TypeError:
+            # generate_error_message("An error occurred while executing the SELECT statement")
+            logger.info("The table already exists")
+        return cursor
+
+    def insert_hmac(_path, _key, _hmac):
+        logger.info("Inserting hashed file in the Data Base...")
+        # We use 'memoryview(_key)' in order to insert he b'hex_key' into the Data Base.
+        bin
+        insert = "INSERT INTO {0} (path, hex_key, hex_hmac) VALUES ('{1}',?,'{2}');".format(app_name, _path, _hmac)
+        print(insert)
+        logger.debug("INSERT statement: "+insert)
+        # print(insert,(_key,))
+        cursor = None
+        try:
+            cursor = conn.execute(insert,(_key,))
+            conn.commit()
+            logger.info("File hash has been saved correctly in the Data Base")
+        except Exception:
+            generate_error_message("Error while trying to insert the file hash in the Data Base")
+
+        return cursor
+
+    def check_integrity(_cursor, path):
+        key = _cursor.fetchone()[0]
+        old_hmac = _cursor.fetchone()[1]
+        _hashed = hash_file(path, key)
+        if _hashed is not None and _hashed[1] == old_hmac:
+            logger.info("The integrity of the file '{0}' is correct!".format(path))
+        else:
+            logger.warn("The integrity of the file '{0}' failed, the data may have been modified!")
 
 
     ###################################################
@@ -96,22 +160,6 @@ def main_method(app_name="py_hids_app"):
     config = None
     conn = sqlite3.connect(str(app_name)+".db")
 
-    #we check if the table exist. If the table doesn't exist we create it.
-    check_table = "SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';".format(app_name)
-    try:
-        cursor = conn.execute(check_table)
-        logger.info("Checking of the table exists...")
-        if len(cursor) == 0:
-            # We create the create_table script
-            logger.info("The table doesn't exists. Creating table...")
-            create_table = "CREATE TABLE {0} (id INTEGER PRIMARY KEY AUTOINCREMENT, path TEXT, hexh_key TEXT, hexh_hmac TEXT);".format(app_name)
-            conn.execute(create_table)
-            # We commit the changes
-            conn.commit()
-        else:
-            logger.info("The table exists")
-    except Exception:
-        generate_error_message("Error while connecting to the database.")
     try:
 
         logger.info("Opening the configuration file...")
@@ -140,7 +188,7 @@ def main_method(app_name="py_hids_app"):
                 if f.is_file():
                     #we get the file extension
                     file_split = os.path.splitext(f.path)
-                    logger.info("Hashing "+str(f.name)+" file...")
+
                     #we put the extension in a variable if the file has a extension
                     if file_split[1] is not None:
                         extension = file_split[1]
@@ -155,23 +203,36 @@ def main_method(app_name="py_hids_app"):
                     if(extension == ""
                        or (extension not in config['exclude_extensions']
                            and f.path not in config['excluded_files'])):
-                        #We get the absolute path to the file, so we cant secure hash it
-                        hashed = hash_file(f.path)
+
+                        # We check if the table exists in the db.
+                        custom_cursor = get_cursor()
+
+                        one = custom_cursor.fetchone()
+                        if one is not None:
+                            logger.info("The path exists in the db")
+                            _cursor = None
+                            logger.info("Checking the integrity of the file '"+f.path+"'...")
+                            cursor = check_integrity(_cursor, f.path)
+                        else:
+                            logger.info("The path doesn't exists in the DB")
+                            #We get the absolute path to the file, so we cant secure hash it
+                            logger.info("Hashing "+str(f.name)+" file...")
+                            hashed = hash_file(f.path)
+                            cursor = insert_hmac(f.path, hashed[0], hashed[1])
+
                     else:
                         hashed = None
 
-                    if hashed is not None:
-                        select = "SELECT hex_key,hex_mac FROM {0} where path=?;".format(app_name)
-                        c = f.path
-                        insert = "INSERT INTO {0} (path, hex_key,hex_hmac) VALUES ({1},{2},{3}) ;".format(app_name, f.path, hashed[0],hashed[1])
-                        cursor = conn.execute(select)
-                        if len(cursor)>=0:
-                            # check_hmac(f.path, cursor[0]['hex_key'],cursor[0]['hex_hmac'])
-                            logger.info("Checking the integrity of the file '"+f.path+"'...")
+                    # if hashed is not None:
 
         # return result
     except Exception:
         generate_error_message("Error while scanning the directories")
+
+    # We close the connection with the DB once we finished
+    conn.close()
+
+    return 0
 
 
 if __name__ == "__main__":
