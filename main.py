@@ -9,7 +9,7 @@ import traceback
 import os
 import binascii
 import yaml
-import glob
+import sqlite3
 
 
 def main_method(app_name="py_hids_app"):
@@ -48,45 +48,70 @@ def main_method(app_name="py_hids_app"):
         traceback.print_exc()
         logger.info(traceback.format_exc())
 
-    def hash_file(file_path):
+    def hash_file(file_path, key=os.urandom(8)):
         """This method hash the file and return the tupple (hexified_key, hexified_hmac)"""
-
-        # logger = logger_config()
 
         logger.info("Generating random key...")
         # Generate a random key with 8 bytes (64 bits)
-        key = os.urandom(8)
         logger.debug("Random generated key: " + str(key))
         hexified_key = binascii.hexlify(key)
         logger.debug("Hexified key: "+str(hexified_key))
 
         hexified_hmac = ""
 
+        exception = False
         try:
 
             logger.info('Opening file with path \'{0}\''.format(file_path))
             # Trying to open the file
-            file = open(file_path, 'r')
+            file = open(file_path, 'rb')# We use 'rb' to open the file in binary mode
 
             logger.info("Reading the lines of the file")
-            msg = file.readlines()
+            msg = file.readlines()# it fails when trying to opening a no *.txt file
 
             hashed = hmac.new(key=key, digestmod=sha256)
 
             for line in msg:
-                hashed.update(line.encode('utf-8'))
+                hashed.update(line)
 
             logger.info("Generated HMAC: " + str(hashed.hexdigest()+"\n\n"))
             hexified_hmac = hashed.hexdigest()
-
+            file.close()
         except Exception:
-            generate_error_message("Error while hashing the file", logger)
+            generate_error_message("Error while hashing the file")
+            exception = True
 
-        return tuple(hexified_key, hexified_hmac)
+        if not exception:
+            return tuple([hexified_key, hexified_hmac])
+        else:
+            return None
 
-    #Here starts the execution
+
+    ###################################################
+    ##########                               ##########
+    ##########   Here starts the execution   ##########
+    ##########                               ##########
+    ###################################################
+
     config = None
+    conn = sqlite3.connect(str(app_name)+".db")
 
+    #we check if the table exist. If the table doesn't exist we create it.
+    check_table = "SELECT name FROM sqlite_master WHERE type='table' AND name='{0}';".format(app_name)
+    try:
+        cursor = conn.execute(check_table)
+        logger.info("Checking of the table exists...")
+        if len(cursor) == 0:
+            # We create the create_table script
+            logger.info("The table doesn't exists. Creating table...")
+            create_table = "CREATE TABLE {0} (id INTEGER PRIMARY KEY AUTOINCREMENT, path TEXT, hexh_key TEXT, hexh_hmac TEXT);".format(app_name)
+            conn.execute(create_table)
+            # We commit the changes
+            conn.commit()
+        else:
+            logger.info("The table exists")
+    except Exception:
+        generate_error_message("Error while connecting to the database.")
     try:
 
         logger.info("Opening the configuration file...")
@@ -100,31 +125,54 @@ def main_method(app_name="py_hids_app"):
 
         generate_error_message("Error opening the config file")
 
-    result = {}
     try:
 
         for d in config['scan_directories']:
-            if d not in config['exclude_directories']:
-                split = d.split('\\')
-                #We get the current directory name
-                directory_name = split[len(split)-1]
-                logger.debug("Current directory name: "+str(directory_name))
+            # if d not in config['exclude_directories']:
+            split = d.split('\\')
+            #We get the current directory name in order to show it in the logs
+            directory_name = split[len(split)-1]
+            logger.debug("Current directory name: "+str(directory_name))
 
-                logger.info("Scaning the directory "+str(directory_name)+": \n"+str(os.scandir(d)))
-                for f in os.scandir(d):
-                    if f.is_file():
-                        logger.info("Hashing "+str(f.name())+" file...")
+            #We start the scanning in the directory
+            logger.info("Scanning the directory "+str(d)+": \n"+str(os.scandir(d)))
+            for f in os.scandir(d):
+                if f.is_file():
+                    #we get the file extension
+                    file_split = os.path.splitext(f.path)
+                    logger.info("Hashing "+str(f.name)+" file...")
+                    #we put the extension in a variable if the file has a extension
+                    if file_split[1] is not None:
+                        extension = file_split[1]
+                    else:
+                        extension = ""
+
+                    #In order to hash the file we check the following things:
+                    #   - If the file doesn't have extension we proceed to hash it
+                    #   - If the file has extension and the extension is in 'exclude_extensions',
+                    #       we check if the whole file is not int 'excluded_files'.
+                    #       Then we proceed to hash the file.
+                    if(extension == ""
+                       or (extension not in config['exclude_extensions']
+                           and f.path not in config['excluded_files'])):
                         #We get the absolute path to the file, so we cant secure hash it
-                        (key, hmac) = hash_file(os.path.abspath(f))
-                        result[key] = hmac # We introduce the key->hmac in the result directory
+                        hashed = hash_file(f.path)
+                    else:
+                        hashed = None
 
-        return result
+                    if hashed is not None:
+                        select = "SELECT hex_key,hex_mac FROM {0} where path=?;".format(app_name)
+                        c = f.path
+                        insert = "INSERT INTO {0} (path, hex_key,hex_hmac) VALUES ({1},{2},{3}) ;".format(app_name, f.path, hashed[0],hashed[1])
+                        cursor = conn.execute(select)
+                        if len(cursor)>=0:
+                            # check_hmac(f.path, cursor[0]['hex_key'],cursor[0]['hex_hmac'])
+                            logger.info("Checking the integrity of the file '"+f.path+"'...")
+
+        # return result
     except Exception:
         generate_error_message("Error while scanning the directories")
 
 
-
 if __name__ == "__main__":
-
-    config = yaml.load(open('py_hids_app.yaml', 'r'))
-    print(config)
+    main_method()

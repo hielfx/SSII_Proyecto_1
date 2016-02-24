@@ -1,16 +1,22 @@
 #NOTE: IS VERY IMPORTANT TO INDENT THE PATH AND ADD A '- ' BEFORE THE PATH.
-#      THE PATH MUST BE BETWEEN "". AS FOLLOWS: "absolute path to directory"
+#      THE PATH MUST BE BETWEEN "". AS FOLLOWS: "absolute\\path\\to\\directory"
 scan_directories:
 #absolute path to the directories to be scanned
-  - "C:\Users\Dani\Desktop"
-  - "C:\Users\Dani\Desktop\Desktop"
-  -
+  - "C:\\Users\\Dani\\Desktop\\Desktop"
+  - "C:\\Users\\Dani\\Desktop\\PRUEBA_HIDS"
+  - "C:\\Users\\Dani\\Desktop"
 
-exclude_directories:
-#absolute path to the directories to be excluded
-  - "C:\Users\Dani\Desktop\Desktop"
-  -
+#scan_extensions:
+##File extensions to be scanned. As follows: '.pdf'
+
+#exclude_directories:
+##absolute path to the directories to be excluded
+#  - "C:\\Users\\Dani\\Desktop\\Desktop"
 
 excluded_files:
 #absolute path to the files to be excluded
-  -
+ -
+
+exclude_extensions:
+#File extensions to be ignore. As follows: '.pdf'
+  - '.pdf'
