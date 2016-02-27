@@ -3,8 +3,8 @@
 scan_directories:
 #absolute path to the directories to be scanned
   - "C:\\Users\\Dani\\Desktop\\PRUEBA_HIDS"
-  - "C:\\Users\\Dani\\Desktop"
-  - "C:\\Users\\Dani\\Desktop\\Desktop"
+#  - "C:\\Users\\Dani\\Desktop"
+#  - "C:\\Users\\Dani\\Desktop\\Desktop"
 
 #scan_extensions:
 ##File extensions to be scanned. As follows: '.pdf'
