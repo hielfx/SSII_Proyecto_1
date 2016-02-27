@@ -20,7 +20,7 @@ def main_method(app_name="py_hids_app"):
     # def logger_config():
     #     """This methods configure the logger object to our own purpose"""
 
-    #Logger configuration
+    # Logger configuration
     logger = logging.getLogger(app_name)
     logger.setLevel(logging.DEBUG)
 
@@ -51,9 +51,9 @@ def main_method(app_name="py_hids_app"):
     def hash_file(file_path, key=os.urandom(8)):
         """This method hash the file and return the tupple (hexified_key, hexified_hmac)"""
 
-        logger.info("Generating random key...")
+        logger.info("Obtaining key...")
         # Generate a random key with 8 bytes (64 bits)
-        logger.debug("Random generated key: " + str(key))
+        logger.debug("Retrieved the key: " + str(key))
         hexified_key = binascii.hexlify(key)
         logger.debug("Hexified key: "+str(hexified_key))
 
@@ -74,7 +74,7 @@ def main_method(app_name="py_hids_app"):
             for line in msg:
                 hashed.update(line)
 
-            logger.info("Generated HMAC: " + str(hashed.hexdigest()+"\n\n"))
+            logger.info("Generated HMAC: " + str(hashed.hexdigest()))
             hexified_hmac = hashed.hexdigest()
             file.close()
         except Exception:
@@ -103,9 +103,9 @@ def main_method(app_name="py_hids_app"):
                 conn.execute(create_table)
                 # We commit the changes
                 conn.commit()
-                logger.info("Table '{0}' created correctly".format(app_name))
+                logger.info("Table '{0}' created correctly\n".format(app_name))
             else:
-                logger.info("The table {0} already exists".format(app_name))
+                logger.info("The table {0} already exists\n".format(app_name))
         except Exception:
             generate_error_message("Error while connecting to the database.")
 
@@ -115,12 +115,12 @@ def main_method(app_name="py_hids_app"):
         select = "SELECT hex_key,hex_hmac FROM {0} where path=?;".format(app_name)
         c = f.path
         try:
-            logger.info("Checking if the path '{0}' exists in the db...".format(c))
+            logger.info("Checking if the file '{0}' exists in the db...".format(c))
             cursor = conn.execute(select, (c,))
             # logger.info("Select statement executed correctly")
         except TypeError:
             # generate_error_message("An error occurred while executing the SELECT statement")
-            logger.info("The table already exists")
+            logger.info("Error while checking the path {0}\n".format(c))
         return cursor
 
     def insert_hmac(_path, _key, _hmac):
@@ -128,7 +128,7 @@ def main_method(app_name="py_hids_app"):
         # We use 'memoryview(_key)' in order to insert he b'hex_key' into the Data Base.
         bin
         insert = "INSERT INTO {0} (path, hex_key, hex_hmac) VALUES ('{1}',?,'{2}');".format(app_name, _path, _hmac)
-        print(insert)
+        # print(insert)
         logger.debug("INSERT statement: "+insert)
         # print(insert,(_key,))
         cursor = None
@@ -142,8 +142,8 @@ def main_method(app_name="py_hids_app"):
         return cursor
 
     def check_integrity(_cursor, path):
-        key = _cursor.fetchone()[0]
-        old_hmac = _cursor.fetchone()[1]
+        key = _cursor[0]
+        old_hmac = _cursor[1]
         _hashed = hash_file(path, key)
         if _hashed is not None and _hashed[1] == old_hmac:
             logger.info("The integrity of the file '{0}' is correct!".format(path))
@@ -209,12 +209,12 @@ def main_method(app_name="py_hids_app"):
 
                         one = custom_cursor.fetchone()
                         if one is not None:
-                            logger.info("The path exists in the db")
-                            _cursor = None
+                            logger.info("The file exists in the db")
+                            cursor = None
                             logger.info("Checking the integrity of the file '"+f.path+"'...")
-                            cursor = check_integrity(_cursor, f.path)
+                            cursor = check_integrity(one, f.path)
                         else:
-                            logger.info("The path doesn't exists in the DB")
+                            logger.info("The file doesn't exists in the DB")
                             #We get the absolute path to the file, so we cant secure hash it
                             logger.info("Hashing "+str(f.name)+" file...")
                             hashed = hash_file(f.path)
