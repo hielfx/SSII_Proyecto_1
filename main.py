@@ -6,19 +6,27 @@ from hashlib import sha256
 import hmac
 import logging
 import traceback
-import os, time
+import os
 import binascii
 import yaml
 import sqlite3
+import time
+import datetime
 
 
-def main_method(app_name="py_hids_app"):
+def main_method():
     """This is the main execution point and the root method.
     This is used to prevent variable names collisions.
     The *.ini file name and the app name must be the same."""
 
-    # def logger_config():
-    # """This methods configure the logger object to our own purpose"""
+    # Variables for app names
+    app_name="py_hids_app"
+    ratio_name="integrity_ratio"
+
+    global total_scanned_files, stable_integrity_files, logger
+    # Variables for integrity ratio
+    total_scanned_files = 0
+    stable_integrity_files = 0
 
     # Logger configuration
     logger = logging.getLogger(app_name)
@@ -152,14 +160,70 @@ def main_method(app_name="py_hids_app"):
     def check_integrity(_cursor, path):
         key = _cursor[0]
         old_hmac = _cursor[1]
+        old_hmac = _cursor[1]
         _hashed = hash_file(path, key)
         if _hashed is not None and _hashed[1] == old_hmac:
             logger.info("The integrity of the file '{0}' is correct!\n".format(path))
+
+            globals()['stable_integrity_files'] += 1
         else:
             # We get the last modification date if the integrity of the file fails
             (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(path)
             logger.warn(
                 "\n     --> The integrity of the file '{0}' failed! The last modification date was {1}\n".format(path, time.ctime(mtime)))
+
+    def insert_ratio(_total_scanned_files, _stable_integrity_files):
+        logger.info("Inserting the ratio in the Data Base...")
+        _insert = "INSERT INTO {0} (insert_date, stable_integrity, total_files) VALUES (?, ?, ?)".format(ratio_name)
+        try:
+            now = datetime.datetime.now()
+            now.strftime('%Y-%m-%d %H:%M:%S')
+            conn.execute(_insert, (now, _stable_integrity_files, _total_scanned_files,))
+            logger.info("Ratio data inserted correctly in the DB\n")
+            conn.commit()
+        except Exception:
+            generate_error_message("Error while inserting the ratio in the db")
+
+    def check_ratio(_total_scanned_files, _stable_integrity_files):
+
+        # In this method we check if the table associated with the ratio exists.
+        # If the table exists, we introduce the new ratio.
+        # If the table doesn't exists, we create the table and introduce then the ratio
+
+        logger.info("Checking the integrity ratios...")
+        _check_table = "SELECT * FROM sqlite_master WHERE name ='{0}' and type='table';".format(ratio_name)
+        _cursor = None
+        try:
+            logger.info("Checking if the table {0} exists...".format(ratio_name))
+            _cursor = conn.execute(_check_table)
+
+        except Exception:
+            generate_error_message("Error while checking the integrity ratios")
+
+        if _cursor is None or _cursor.fetchone() is None:
+
+            # If the scanned files are  0 we don't insert the ratio in the db
+            if _total_scanned_files != 0:
+                logger.info("The table {0} does not exists!. Creating table...")
+                # The create statement
+                create_ratio_table = "CREATE TABLE {0} (id INTEGER PRIMARY KEY AUTOINCREMENT, last_scan DATE, stable_integrity INTEGER, total_files INTEGER);".format(ratio_name)
+
+                try:
+                    _cursor = conn.execute(create_ratio_table)
+                    logger.info("Created table {0}".format(ratio_name))
+                    conn.commit()
+
+                    insert_ratio(_total_scanned_files, _stable_integrity_files)
+                    # We close the cursor
+                    _cursor.close()
+                except Exception:
+                    generate_error_message("Error while creating the table {0}".format(ratio_name))
+
+            else:
+                logger.info("There's not scanned files yet. The ratio was not inserted in the Data Base\n")
+        else:
+            logger.info("The table {0} already exists".format(ratio_name))
+            insert_ratio(_total_scanned_files,_stable_integrity_files)
 
 
     ###################################################
@@ -224,6 +288,9 @@ def main_method(app_name="py_hids_app"):
 
                         one = custom_cursor.fetchone()
                         if one is not None:
+
+                            total_scanned_files += 1
+
                             logger.info("The file exists in the db")
                             cursor = None
                             logger.info("Checking the integrity of the file '" + f.path + "'...")
@@ -241,6 +308,7 @@ def main_method(app_name="py_hids_app"):
 
                         # if hashed is not None:
             logger.info("Finished scanning all the files in {0}\n".format(d))
+            check_ratio(total_scanned_files, stable_integrity_files)
 
         logger.info("Finished scanning all the directories\n\n")
         # return result
