@@ -23,10 +23,11 @@ def main_method():
     app_name="py_hids_app"
     ratio_name="integrity_ratio"
 
-    global total_scanned_files, stable_integrity_files, logger
+    global total_scanned_files, stable_integrity_files, logger, modified_files
     # Variables for integrity ratio
     total_scanned_files = 0
     stable_integrity_files = 0
+    modified_files = {}
 
     # Logger configuration
     logger = logging.getLogger(app_name)
@@ -169,8 +170,10 @@ def main_method():
         else:
             # We get the last modification date if the integrity of the file fails
             (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(path)
+            modification_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(mtime))
             logger.warn(
-                "\n     --> The integrity of the file '{0}' failed! The last modification date was {1}\n".format(path, time.ctime(mtime)))
+                "\n     --> The integrity of the file '{0}' failed! The last modification date was {1}\n".format(path, modification_time))
+            globals()['modified_files'][path] = modification_time
 
     def insert_ratio(_total_scanned_files, _stable_integrity_files):
         logger.info("Inserting the ratio in the Data Base...")
@@ -183,6 +186,20 @@ def main_method():
             conn.commit()
         except Exception:
             generate_error_message("Error while inserting the ratio in the db")
+
+    def check_ratio_values(_total_scanned_files, _stable_integrity_files):
+        logger.info("Checking ratio values...")
+        if _total_scanned_files == 0:
+            logger.info("There's no files scanned")
+        elif _stable_integrity_files == 0:
+            logger.warn("The integrity ratio is 0%. An action should be taken.")
+        else:
+            ratio = _stable_integrity_files/_total_scanned_files
+
+            if ratio == 1:
+                logger.info("The integrity ratio is 100%. No action required")
+            else:
+                logger.warn("The integrity ratio is {0}%. An action should be taken.".format(ratio*100))
 
     def check_ratio(_total_scanned_files, _stable_integrity_files):
 
@@ -204,9 +221,9 @@ def main_method():
 
             # If the scanned files are  0 we don't insert the ratio in the db
             if _total_scanned_files != 0:
-                logger.info("The table {0} does not exists!. Creating table...")
+                logger.info("The table {0} does not exists!. Creating table...".format(ratio_name))
                 # The create statement
-                create_ratio_table = "CREATE TABLE {0} (id INTEGER PRIMARY KEY AUTOINCREMENT, last_scan DATE, stable_integrity INTEGER, total_files INTEGER);".format(ratio_name)
+                create_ratio_table = "CREATE TABLE {0} (id INTEGER PRIMARY KEY AUTOINCREMENT, insert_date DATE, stable_integrity INTEGER, total_files INTEGER);".format(ratio_name)
 
                 try:
                     _cursor = conn.execute(create_ratio_table)
@@ -220,10 +237,11 @@ def main_method():
                     generate_error_message("Error while creating the table {0}".format(ratio_name))
 
             else:
-                logger.info("There's not scanned files yet. The ratio was not inserted in the Data Base\n")
+                logger.info("There's not scanned files yet or it was the first scan. The ratio was not inserted in the Data Base\n")
         else:
             logger.info("The table {0} already exists".format(ratio_name))
             insert_ratio(_total_scanned_files,_stable_integrity_files)
+            check_ratio_values(_total_scanned_files, _stable_integrity_files)
 
 
     ###################################################
@@ -308,7 +326,17 @@ def main_method():
 
                         # if hashed is not None:
             logger.info("Finished scanning all the files in {0}\n".format(d))
+
             check_ratio(total_scanned_files, stable_integrity_files)
+
+            # We check and print in the log if true, if the are compromised integrity files
+            if len(globals()['modified_files']) is not None:
+                string = ""
+                # We have to append all the file path in a variable in order to print them correctly in the log
+                for key in globals()['modified_files'].keys():
+                    value = globals()['modified_files'][key]
+                    string = string + "     " + " -> " + "(" + str(value) + ") " + str(key) + "\n"
+                logger.warn("The integrity of the following files has been compromised:\n{0}".format(string))
 
         logger.info("Finished scanning all the directories\n\n")
         # return result
