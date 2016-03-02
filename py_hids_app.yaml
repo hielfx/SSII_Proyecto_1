@@ -2,7 +2,7 @@
 #      THE PATH MUST BE BETWEEN "". AS FOLLOWS: "absolute\\path\\to\\directory"
 scan_directories:
 #absolute path to the directories to be scanned
-  - "C:\\Users\\Dani\\Desktop\\PRUEBA_HIDS"
+  - C:\\Users\\Dani\\Desktop\\PRUEBA_HIDS
 #  - "C:\\Users\\Dani\\Desktop\\PRUEBA_HIDS"
 #  - "C:\\Users\\Dani\\Desktop"
 #  - "C:\\Users\\Dani\\Desktop\\Desktop"
@@ -14,9 +14,8 @@ scan_directories:
 ##absolute path to the directories to be excluded
 #  - "C:\\Users\\Dani\\Desktop\\Desktop"
 
-excluded_files:
 #absolute path to the files to be excluded
-  - null
-exclude_extensions:
+excluded_files: []
+
 #File extensions to be ignore. As follows: '.pdf'
-  - null
+exclude_extensions: []
