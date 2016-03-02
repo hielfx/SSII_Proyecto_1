@@ -8,6 +8,8 @@ import main_algorithm  # Own module
 import chart_main  # Own module
 import yaml
 import os
+import platform
+
 
 def gui_main():
 
@@ -71,7 +73,7 @@ def gui_main():
 
 
     # scan_directories
-    sd_label = tk.Label(root, text="Add directory to scan (absolute path)", font="bold")
+    sd_label = tk.Label(root, text="Add directory to scan (absolute path)")
     sd_label.pack(fill=tk.X)
 
     # New frame to the textbox and the button
@@ -102,7 +104,10 @@ def gui_main():
             sd_list.delete(index)
             split = item.split('\\')
             reconstruct = "\\\\".join(split)
-            globals()['config']['scan_directories'].remove(reconstruct)
+            try:
+                globals()['config']['scan_directories'].remove(reconstruct)
+            except:
+                return -1
 
     # Button to remove the selected paths to be scanned
     sd_list_remove_button = tk.Button(root, text="Remove selected directories", command=remove_scan_dir_callback)
@@ -112,8 +117,7 @@ def gui_main():
         # We ge get the path stored in the text field
         scan_dir = str(os.path.normpath(sd_entry.get()))
 
-        scan_dir = globals()['config']['scan_directories']
-        if scan_dir not in globals()['config']['scan_directories']:
+        if scan_dir not in sd_list.get(0, tk.END):
             sd_list.insert(globals()['sd_count'], scan_dir)
             globals()['sd_count'] += 1
             # As we are going to insery the path in a yaml file, we need to scape the \ replacing them by \\
@@ -134,7 +138,7 @@ def gui_main():
     # ----------------------------------------
 
     # exclude files
-    ef_label = tk.Label(root, text="Add files to exclude while scanning (absolute path)", font="bold")
+    ef_label = tk.Label(root, text="Add files to exclude while scanning (absolute path)")
     ef_label.pack(fill=tk.X)
 
     # New frame to the textbox and the button
@@ -165,7 +169,10 @@ def gui_main():
             ef_list.delete(index)
             split = item.split('\\')
             reconstruct = "\\\\".join(split)
-            globals()['config']['excluded_files'].remove(reconstruct)
+            try:
+                globals()['config']['excluded_files'].remove(reconstruct)
+            except:
+                return -1
 
     # Button to remove the selected files to be excluded
     ef_list_remove_button = tk.Button(root, text="Remove selected files", command=remove_exclude_file_callback)
@@ -175,7 +182,7 @@ def gui_main():
         # We ge get the path stored in the text field
         exclude_file = str(os.path.normpath(ef_entry.get()))
 
-        if exclude_file not in globals()['config']['excluded_files']:
+        if exclude_file not in ef_list.get(0, tk.END):
             ef_list.insert(globals()['ef_count'], exclude_file)
             globals()['ef_count'] += 1
             # As we are going to insery the path in a yaml file, we need to scape the \ replacing them by \\
@@ -196,7 +203,7 @@ def gui_main():
     # ----------------------------------------
 
      # exclude extensions
-    ee_label = tk.Label(root, text="Add extensions to exclude (e.g.: .pdf)", font="bold")
+    ee_label = tk.Label(root, text="Add extensions to exclude (e.g.: .pdf)")
     ee_label.pack(fill=tk.X)
 
     # New frame to the textbox and the button
@@ -227,7 +234,10 @@ def gui_main():
             ee_list.delete(index)
             split = item.split('\\')
             reconstruct = "\\\\".join(split)
-            globals()['config']['exclude_extension'].remove(reconstruct)
+            try:
+                globals()['config']['exclude_extension'].remove(reconstruct)
+            except:
+                return -1
 
     # Button to remove the selected files to be excluded
     ee_list_remove_button = tk.Button(root, text="Remove selected extensions", command=remove_exclude_extension_callback)
@@ -237,7 +247,7 @@ def gui_main():
         # We ge get the path stored in the text field
         exclude_extension = str(os.path.normpath(ee_entry.get()))
 
-        if exclude_extension not in globals()['config']['exclude_extensions']:
+        if exclude_extension not in ee_list.get(0, tk.END):
             ee_list.insert(globals()['ee_count'], exclude_extension)
             globals()['ee_count'] += 1
             # As we are going to insery the path in a yaml file, we need to scape the \ replacing them by \\
@@ -270,6 +280,20 @@ def gui_main():
     perform_scan = tk.Button(last_button_frame, text="Perform a scan now", command=lambda: main_algorithm.main_method(show=True))
     perform_scan.grid(row=0, column=2)
 
+    def open_log_callback():
+        try:
+            if platform.system() == "Windows":
+                os.system("start hids.log")
+            elif platform.system() == "Linux":
+                os.system("xdg-open hids.log")
+            else:
+                msgbox.showinfo("Could not open","The log file could not be opened in this {0} system".format(platform.system()))
+        except:
+            msgbox.showerror("Error","There was a problem opening the log file")
+
+    # Open log file
+    open_log = tk.Button(last_button_frame, text="Open log", command=open_log_callback)
+    open_log.grid(row=0, column=3)
 
     root.mainloop()
 
