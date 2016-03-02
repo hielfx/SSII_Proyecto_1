@@ -4,14 +4,10 @@ __author__ = 'Daniel Sánchez'
 
 import tkinter as tk
 import tkinter.messagebox as msgbox
-import main  # Own module
+import main_algorithm  # Own module
 import chart_main  # Own module
 import yaml
 import os
-
-#TODO: Graphic interface
-#TODO: Automate tasks
-
 
 def gui_main():
 
@@ -22,39 +18,50 @@ def gui_main():
         excluded_files = sorted(list(set(globals()['config']['excluded_files'])))
         result = {}
 
-
-
         result['scan_directories'] = scan_directories
         result['exclude_extensions'] = exclude_extensions
         result['excluded_files'] = excluded_files
-        with open('result.yaml', 'w') as f:
+        with open(str(app_name)+'.yaml', 'w') as f:
             yaml.dump(result, f, default_flow_style=False)
 
-    global scan_directories, sd_count, config
+        msgbox.showinfo("Configuration saved", "The configuration has been saved")
+
+    global scan_directories, sd_count, config, ef_count, ee_count
     result = {}
     scan_directories = []
     sd_count = 1
+    ef_count = 1
+    ee_count = 1
     main = tk.Tk()
     main.title("HIDS GUI")
     app_name = "py_hids_app"
     root = tk.Frame(main)
     root.pack(fill=tk.X)
 
-    def display_current_scandirs(listbox):
+    def display_current(listbox, option):
         try:
 
             globals()['config'] = yaml.load(open(str(app_name) + ".yaml", 'r'))
             index = 1
 
-            for row in sorted(list(set(globals()['config']['scan_directories']))):
-                listbox.insert(index, row)
+            for row in sorted(list(set(globals()['config'][option]))):
+                listbox.insert(index, row.replace("\\\\","\\"))
                 index += 1
-                globals()['sd_count'] += 1
-                globals()['config']['scan_directories'].remove(row)
-                globals()['config']['scan_directories'].append(str(row.replace("\\", "\\\\")))
+
+                if option == "exclude_extensions":
+                    _count = "ee_count"
+                elif option == "excluded_files":
+                    _count = "ef_count"
+                else:
+                    _count = "sd_count"
+                globals()[_count] += 1
+                globals()['config'][option].remove(row)
+                # globals()['config']['scan_directories'].append(str(row.replace("\\", "\\\\")))
+                globals()['config'][option].append(row)
 
         except yaml.YAMLError:
             return -1
+
 
     ###################################################
     ##########                               ##########
@@ -64,14 +71,14 @@ def gui_main():
 
 
     # scan_directories
-    sd_label = tk.Label(root, text="Add directory to scan")
+    sd_label = tk.Label(root, text="Add directory to scan (absolute path)", font="bold")
     sd_label.pack(fill=tk.X)
 
     # New frame to the textbox and the button
     entry_panel = tk.Frame(root)
     entry_panel.pack()
     # Textbox
-    sd_entry = tk.Entry(entry_panel, width=100)
+    sd_entry = tk.Entry(entry_panel, width=80)
     sd_entry.pack(side=tk.LEFT, padx=1, pady=1)
 
     # current selected dir to scan
@@ -85,10 +92,10 @@ def gui_main():
     sd_list_yscroll = tk.Scrollbar(scan_dir_panel)
     sd_list_yscroll.pack(side=tk.RIGHT, fill=tk.Y)
     # List of selected dirs to scan
-    sd_list = tk.Listbox(scan_dir_panel, selectmode=tk.MULTIPLE, yscrollcommand=sd_list_yscroll.set)
-    display_current_scandirs(sd_list)
+    sd_list = tk.Listbox(scan_dir_panel, selectmode=tk.MULTIPLE, yscrollcommand=sd_list_yscroll.set, height=5)
+    display_current(sd_list,"scan_directories")
 
-    def remove_scan_dir_callback():
+    def remove_scan_dir_callback():  # Method to remove the items from the listbox and the scan_directories
         items = sd_list.curselection()
         for index in items:
             item = sd_list.get(index)
@@ -97,13 +104,15 @@ def gui_main():
             reconstruct = "\\\\".join(split)
             globals()['config']['scan_directories'].remove(reconstruct)
 
+    # Button to remove the selected paths to be scanned
     sd_list_remove_button = tk.Button(root, text="Remove selected directories", command=remove_scan_dir_callback)
 
-    def add_scan_directory_callback():
+    def add_scan_directory_callback():  # Method to add items fto the listbox and the scan_directories
 
         # We ge get the path stored in the text field
         scan_dir = str(os.path.normpath(sd_entry.get()))
 
+        scan_dir = globals()['config']['scan_directories']
         if scan_dir not in globals()['config']['scan_directories']:
             sd_list.insert(globals()['sd_count'], scan_dir)
             globals()['sd_count'] += 1
@@ -124,9 +133,143 @@ def gui_main():
 
     # ----------------------------------------
 
-    save_config_button = tk.Button(root, text="Save current configuration", command=save_yaml)
+    # exclude files
+    ef_label = tk.Label(root, text="Add files to exclude while scanning (absolute path)", font="bold")
+    ef_label.pack(fill=tk.X)
 
-    save_config_button.pack(padx=1,pady=1)
+    # New frame to the textbox and the button
+    ef_entry_panel = tk.Frame(root)
+    ef_entry_panel.pack()
+    # Textbox
+    ef_entry = tk.Entry(ef_entry_panel, width=80)
+    ef_entry.pack(side=tk.LEFT, padx=1, pady=1)
+
+    # current selected files to exclude
+    exclude_file_panel = tk.Frame(root)
+    exclude_file_panel.pack(fill=tk.X)
+
+    ef_list_label = tk.Label(exclude_file_panel, text="Current selected files to exclude")
+    ef_list_label.pack(fill=tk.X)
+
+    # Y scroll bar
+    ef_list_yscroll = tk.Scrollbar(exclude_file_panel)
+    ef_list_yscroll.pack(side=tk.RIGHT, fill=tk.Y)
+    # List of selected dirs to scan
+    ef_list = tk.Listbox(exclude_file_panel, selectmode=tk.MULTIPLE, yscrollcommand=sd_list_yscroll.set, height=5)
+    display_current(ef_list, "excluded_files")
+
+    def remove_exclude_file_callback():  # Method to remove the items from the listbox and the scan_directories
+        items = ef_list.curselection()
+        for index in items:
+            item = ef_list.get(index)
+            ef_list.delete(index)
+            split = item.split('\\')
+            reconstruct = "\\\\".join(split)
+            globals()['config']['excluded_files'].remove(reconstruct)
+
+    # Button to remove the selected files to be excluded
+    ef_list_remove_button = tk.Button(root, text="Remove selected files", command=remove_exclude_file_callback)
+
+    def add_exclude_file_callback():  # Method to add items fto the listbox and the excluded_files
+
+        # We ge get the path stored in the text field
+        exclude_file = str(os.path.normpath(ef_entry.get()))
+
+        if exclude_file not in globals()['config']['excluded_files']:
+            ef_list.insert(globals()['ef_count'], exclude_file)
+            globals()['ef_count'] += 1
+            # As we are going to insery the path in a yaml file, we need to scape the \ replacing them by \\
+            globals()['config']['excluded_files'].append(str(exclude_file.replace("\\", "\\\\")))
+
+            # We clear the tetxt
+            ef_entry.delete(0, len(ef_entry.get()))
+            ef_entry.insert(0, "")
+        else:
+            msgbox.showwarning("Already excluded", "The file '{0}' is already excluded".format(exclude_file))
+
+    ef_button = tk.Button(ef_entry_panel, text="Exclude", command=add_exclude_file_callback, height=1, width=5)
+    ef_button.pack(pady=1, padx=1)
+
+    ef_list.pack(fill=tk.X, pady=1, padx=1)
+    ef_list_remove_button.pack(pady=1, padx=1)
+
+    # ----------------------------------------
+
+     # exclude extensions
+    ee_label = tk.Label(root, text="Add extensions to exclude (e.g.: .pdf)", font="bold")
+    ee_label.pack(fill=tk.X)
+
+    # New frame to the textbox and the button
+    ee_entry_panel = tk.Frame(root)
+    ee_entry_panel.pack()
+    # Textbox
+    ee_entry = tk.Entry(ee_entry_panel, width=80)
+    ee_entry.pack(side=tk.LEFT, padx=1, pady=1)
+
+    # current selected files to exclude
+    exclude_extension_panel = tk.Frame(root)
+    exclude_extension_panel.pack(fill=tk.X)
+
+    ee_list_label = tk.Label(exclude_extension_panel, text="Current selected files to exclude")
+    ee_list_label.pack(fill=tk.X)
+
+    # Y scroll bar
+    ee_list_yscroll = tk.Scrollbar(exclude_extension_panel)
+    ee_list_yscroll.pack(side=tk.RIGHT, fill=tk.Y)
+    # List of selected dirs to scan
+    ee_list = tk.Listbox(exclude_extension_panel, selectmode=tk.MULTIPLE, yscrollcommand=sd_list_yscroll.set, height=5)
+    display_current(ee_list, "exclude_extensions")
+
+    def remove_exclude_extension_callback():  # Method to remove the items from the listbox and the scan_directories
+        items = ee_list.curselection()
+        for index in items:
+            item = ee_list.get(index)
+            ee_list.delete(index)
+            split = item.split('\\')
+            reconstruct = "\\\\".join(split)
+            globals()['config']['exclude_extension'].remove(reconstruct)
+
+    # Button to remove the selected files to be excluded
+    ee_list_remove_button = tk.Button(root, text="Remove selected extensions", command=remove_exclude_extension_callback)
+
+    def add_exclude_extension_callback():  # Method to add items to the listbox and the exclude_extensions
+
+        # We ge get the path stored in the text field
+        exclude_extension = str(os.path.normpath(ee_entry.get()))
+
+        if exclude_extension not in globals()['config']['exclude_extensions']:
+            ee_list.insert(globals()['ee_count'], exclude_extension)
+            globals()['ee_count'] += 1
+            # As we are going to insery the path in a yaml file, we need to scape the \ replacing them by \\
+            globals()['config']['exclude_extension'].append(str(exclude_extension.replace("\\", "\\\\")))
+
+            # We clear the tetxt
+            ee_entry.delete(0, len(ee_entry.get()))
+            ee_entry.insert(0, "")
+        else:
+            msgbox.showwarning("Already excluded", "The extension '{0}' is already excluded".format(exclude_extension))
+
+    ee_button = tk.Button(ee_entry_panel, text="Exclude", command=add_exclude_extension_callback, height=1, width=5)
+    ee_button.pack(pady=1, padx=1)
+
+    ee_list.pack(fill=tk.X, pady=1, padx=1)
+    ee_list_remove_button.pack(pady=1, padx=1)
+
+    # ----------------------------------------
+
+    # Frame for the last buttons
+    last_button_frame = tk.Frame(root)
+    last_button_frame.pack(side=tk.BOTTOM)
+    # Save button
+    save_config_button = tk.Button(last_button_frame, text="Save current configuration", command=save_yaml)
+    save_config_button.grid(row=0, column=0)
+    # Display chart button
+    display_current_chart = tk.Button(last_button_frame, text="Display current ratio chart", command=lambda: chart_main.main_chart(show=True))
+    display_current_chart.grid(row=0, column=1)
+    # Perform a scan now
+    perform_scan = tk.Button(last_button_frame, text="Perform a scan now", command=lambda: main_algorithm.main_method(show=True))
+    perform_scan.grid(row=0, column=2)
+
 
     root.mainloop()
 

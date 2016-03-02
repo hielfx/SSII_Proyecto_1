@@ -12,12 +12,13 @@ import yaml
 import sqlite3
 import time
 import datetime
+import tkinter.messagebox as msgbox
 
 
-def main_method():
+def main_method(show=False):
     """This is the main execution point and the root method.
     This is used to prevent variable names collisions.
-    The *.ini file name and the app name must be the same."""
+    if show=True it will display a message every time the scan finish"""
 
     # Variables for app names
     app_name="py_hids_app"
@@ -271,7 +272,7 @@ def main_method():
         # We check if the table exists in our db
         check_table()
 
-        for dir in config['scan_directories']:
+        for dir in sorted(config['scan_directories']):
             d = os.path.normpath(r""+str(dir))  # With this A//B, A/B/, A/./B and A/foo/../B all become A/B
             # if d not in config['exclude_directories']:
             split = d.split('\\')
@@ -298,9 +299,10 @@ def main_method():
                     #   - If the file has extension and the extension is in 'exclude_extensions',
                     #       we check if the whole file is not int 'excluded_files'.
                     #       Then we proceed to hash the file.
+                    file_path = f.path.replace("\\","\\\\")
                     if (extension == ""
                         or (extension not in config['exclude_extensions']
-                            and f.path not in config['excluded_files'])):
+                            and file_path not in config['excluded_files'])):
 
                         # We check if the table exists in the db.
                         custom_cursor = get_cursor()
@@ -323,7 +325,7 @@ def main_method():
 
                         custom_cursor.close()
                     else:
-                        hashed = None
+                        logger.info("Excluded file '{0}'\n".format(f.path))
 
                         # if hashed is not None:
             logger.info("Finished scanning all the files in {0}\n".format(d))
@@ -340,6 +342,9 @@ def main_method():
                 logger.warn("The integrity of the following files has been compromised:\n{0}".format(string))
 
         logger.info("Finished scanning all the directories\n\n")
+
+        if show is True:
+            msgbox.showinfo("Scan complete", "Finished scanning all the directories")
         # return result
     except Exception:
         generate_error_message("Error while scanning the directories")
