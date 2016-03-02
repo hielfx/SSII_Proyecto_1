@@ -7,9 +7,13 @@ import sqlite3
 import logging
 import traceback
 import datetime
+import os
 
 
-def main_chart():
+def main_chart(show=False):
+    """show can be True or False. False by default.
+    If show = True, the system display the chart in a interactive mode.
+    If show = False, it will save the chart in *.png format"""
 
     app_name="py_hids_app"
     ratio_name="integrity_ratio"
@@ -35,11 +39,10 @@ def main_chart():
     logger.addHandler(fh)
     logger.addHandler(ch)
 
-
     def generate_error_message(msg):
         logger.info(str(msg) + "\n\n")
-        traceback.print_exc()
-        logger.info(str(traceback.format_exc()) + "\n\n")
+        # traceback.print_exc()
+        logger.debug(str(traceback.format_exc()) + "\n\n")
 
     conn = sqlite3.connect(app_name+".db")
 
@@ -92,13 +95,22 @@ def main_chart():
             _to = x_sticks[len(x_sticks)-1].split("\n")
             plt.title("Ratios from \"{0} {1}\" \n to \"{2} {3}\"".format(_from[0], _from[1], _to[0], _to[1]))
 
-            logger.info("Generating and saving the chart...")
-            # Saving the chart to a *.png file
-            name = str(datetime.datetime.now().strftime("%Y-%m-%d %H.%M.%S"))+" - Ratio chart.png"
-            plt.savefig(name, bbox_inches='tight')
 
-            logger.info("Chart created with name '{0}'\n\n".format(name))
-            # plt.show()
+             # If show = True, we plot the chart and show it as an interactive mode
+            if show:
+                logger.info("Selected show chart")
+                logger.info("Generating the chart in interactive mode...")
+                plt.show()
+            else:
+                logger.info("Selected save chart")
+                logger.info("Generating and saving the chart...")
+                # Saving the chart to a *.png file
+                name = str(datetime.datetime.now().strftime("%Y-%m-%d %H.%M.%S"))+" - Ratio chart.png"
+                plt.savefig(name, bbox_inches='tight')
+
+                logger.info("Chart created with name '{0}'\n\n".format(name))
+
+
         else:
             logger.info("Unable to generate the chart, there are no ratios yet\n")
 

@@ -54,8 +54,8 @@ def main_method():
 
     def generate_error_message(msg):
         logger.info(str(msg) + "\n\n")
-        traceback.print_exc()
-        logger.info(str(traceback.format_exc()) + "\n\n")
+        # traceback.print_exc()
+        logger.debug(str(traceback.format_exc()) + "\n\n")
 
     def hash_file(file_path, key=os.urandom(8)):
         """This method hash the file and return the tupple (hexified_key, hexified_hmac)"""
@@ -271,7 +271,8 @@ def main_method():
         # We check if the table exists in our db
         check_table()
 
-        for d in config['scan_directories']:
+        for dir in config['scan_directories']:
+            d = os.path.normpath(r""+str(dir))  # With this A//B, A/B/, A/./B and A/foo/../B all become A/B
             # if d not in config['exclude_directories']:
             split = d.split('\\')
             #We get the current directory name in order to show it in the logs
@@ -279,7 +280,7 @@ def main_method():
             logger.debug("Current directory name: " + str(directory_name))
 
             #We start the scanning in the directory
-            logger.info("Scanning the directory " + str(d) + ": \n" + str(
+            logger.info("Scanning the directory " + str() + ": \n" + str(
                 os.listdir(d)) + "\n")  # listdir to print all the content
             for f in os.scandir(d):
                 if f.is_file():

@@ -1,0 +1,320 @@
+2016-03-02 00:47:39,437 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:47:39,438 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:47:39,441 - py_hids_app - INFO - An error occurred while checking the ratios
+2016-03-02 00:48:08,252 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:48:09,209 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:48:19,600 - py_hids_app - INFO - An error occurred while checking the ratios
+2016-03-02 00:49:22,822 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:49:23,607 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:49:31,865 - py_hids_app - INFO - An error occurred while checking the ratios
+2016-03-02 00:50:18,238 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:50:18,239 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:50:18,239 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 00:50:18,240 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 60, in main_chart
+    ratio_cursor.execute(_get_ratios)
+sqlite3.OperationalError: no such column: stable_interity
+
+
+
+2016-03-02 00:50:34,452 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:50:34,453 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:50:36,383 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 00:50:36,458 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 68, in main_chart
+    plt.plot(x, y,'ro')
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\pyplot.py", line 3154, in plot
+    ret = ax.plot(*args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\__init__.py", line 1812, in inner
+    return func(ax, *args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\axes\_axes.py", line 1425, in plot
+    self.add_line(line)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\axes\_base.py", line 1708, in add_line
+    self._update_line_limits(line)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\axes\_base.py", line 1730, in _update_line_limits
+    path = line.get_path()
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\lines.py", line 925, in get_path
+    self.recache()
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\lines.py", line 612, in recache
+    x = np.asarray(xconv, np.float_)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\numpy\core\numeric.py", line 482, in asarray
+    return array(a, dtype, copy=False, order=order)
+ValueError: could not convert string to float: '2016-03-01 23:09:07'
+
+
+
+2016-03-02 00:55:03,896 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:55:03,896 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:56:14,961 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:56:14,961 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:57:46,946 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:57:46,946 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 00:59:16,115 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 00:59:16,115 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:01:02,487 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:01:02,487 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:02:20,611 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:02:20,612 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:02:50,794 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:02:50,794 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:03:13,198 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:03:13,199 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:03:26,897 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:03:26,897 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:03:41,063 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:03:41,063 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:05:20,550 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:05:21,388 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:06:40,756 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:06:41,399 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:07:39,912 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:07:40,266 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:08:10,016 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:08:10,016 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:10:15,880 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:10:15,880 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:15:17,546 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:15:17,546 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:15:17,731 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:15:17,732 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 78, in main_chart
+    plt.savefig(str(time.strftime('%Y-%m-%d %H:%M:%S',datetime.datetime.now()))+" - Ratio chart.png")
+TypeError: Tuple or struct_time argument required
+
+
+
+2016-03-02 01:15:39,687 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:15:39,688 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:15:39,877 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:15:39,878 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 79, in main_chart
+    plt.savefig(str(time.strftime('%Y-%m-%d %H:%M:%S',datetime.datetime.now()))+" - Ratio chart.png")
+TypeError: Tuple or struct_time argument required
+
+
+
+2016-03-02 01:16:15,432 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:16:15,432 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:16:15,674 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:16:15,728 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 79, in main_chart
+    plt.savefig(str(datetime.datetime.now())+" - Ratio chart.png")
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\pyplot.py", line 688, in savefig
+    res = fig.savefig(*args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\figure.py", line 1565, in savefig
+    self.canvas.print_figure(*args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\backend_bases.py", line 2232, in print_figure
+    **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\backends\backend_agg.py", line 532, in print_png
+    filename_or_obj = open(filename_or_obj, 'wb')
+OSError: [Errno 22] Invalid argument: '2016-03-02 01:16:15.631573 - Ratio chart.png'
+
+
+
+2016-03-02 01:19:01,992 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:19:01,992 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:23:44,353 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:23:44,353 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:28:00,882 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:28:00,882 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:28:55,265 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:28:55,266 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:29:18,569 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:29:18,569 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:29:18,867 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:29:18,872 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 80, in main_chart
+    plt.savefig(name, bbox_inches='tight')
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\pyplot.py", line 688, in savefig
+    res = fig.savefig(*args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\figure.py", line 1565, in savefig
+    self.canvas.print_figure(*args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\backend_bases.py", line 2232, in print_figure
+    **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\backends\backend_agg.py", line 532, in print_png
+    filename_or_obj = open(filename_or_obj, 'wb')
+OSError: [Errno 22] Invalid argument: '2016-03-02 01:29:18.753677 - Ratio chart.png'
+
+
+
+2016-03-02 01:31:45,542 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:31:45,542 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:31:45,870 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:31:45,876 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 80, in main_chart
+    plt.savefig(name, bbox_inches='tight')
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\pyplot.py", line 688, in savefig
+    res = fig.savefig(*args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\figure.py", line 1565, in savefig
+    self.canvas.print_figure(*args, **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\backend_bases.py", line 2232, in print_figure
+    **kwargs)
+  File "C:\Users\Dani\AppData\Local\Programs\Python\Python35\lib\site-packages\matplotlib\backends\backend_agg.py", line 532, in print_png
+    filename_or_obj = open(filename_or_obj, 'wb')
+OSError: [Errno 22] Invalid argument: '2016-03-02 01:31:45 - Ratio chart.png'
+
+
+
+2016-03-02 01:32:12,812 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:32:12,812 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:33:05,577 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:33:05,577 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:35:10,265 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:35:10,265 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:42:20,216 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:42:20,234 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:42:20,235 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:42:20,236 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 70, in main_chart
+    x_sticks.append(row[0].strftime('%Y-%m-%d\n%H:%M:%S'))
+AttributeError: 'str' object has no attribute 'strftime'
+
+
+
+2016-03-02 01:44:01,962 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:44:01,963 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:44:01,963 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:44:01,964 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 70, in main_chart
+    x_sticks.append(row[0].strftime('%Y-%m-%d\n%H:%M:%S'))
+AttributeError: 'str' object has no attribute 'strftime'
+
+
+
+2016-03-02 01:46:46,920 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:46:46,920 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:46:46,921 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:46:46,922 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 70, in main_chart
+    x_sticks.append(row[0].strftime('%Y-%m-%d\n%H:%M:%S'))
+AttributeError: 'str' object has no attribute 'strftime'
+
+
+
+2016-03-02 01:47:03,622 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:47:03,623 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:47:47,573 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 01:47:47,573 - py_hids_app - INFO - Checking if the table exists...
+2016-03-02 01:48:25,429 - py_hids_app_delete - INFO - Starting process to plot the ratios
+2016-03-02 01:48:25,430 - py_hids_app_delete - INFO - Checking if the table exists...
+2016-03-02 01:48:25,430 - py_hids_app_delete - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:48:25,431 - py_hids_app_delete - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 61, in main_chart
+    if ratio_cursor.fetchone()[0] is not None:
+TypeError: 'NoneType' object is not subscriptable
+
+
+
+2016-03-02 01:48:49,186 - py_hids_app_delete - INFO - Starting process to plot the ratios
+2016-03-02 01:48:49,187 - py_hids_app_delete - INFO - Checking if the table exists...
+2016-03-02 01:48:49,187 - py_hids_app_delete - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 01:48:49,188 - py_hids_app_delete - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 61, in main_chart
+    if ratio_cursor is not None and ratio_cursor.fetchone()[0] is not None:
+TypeError: 'NoneType' object is not subscriptable
+
+
+
+2016-03-02 01:49:27,447 - py_hids_app_delete - INFO - Starting process to plot the ratios
+2016-03-02 01:49:27,448 - py_hids_app_delete - INFO - Checking if the table exists...
+2016-03-02 01:50:45,644 - py_hids_app_delete - INFO - Starting process to plot the ratios
+2016-03-02 01:50:45,644 - py_hids_app_delete - INFO - Checking if the table exists...
+2016-03-02 01:50:51,818 - py_hids_app_delete - INFO - Unable to generate the chart, there are no ratios yet.
+2016-03-02 01:53:30,638 - py_hids_app_delete - INFO - Starting process to plot the ratios
+2016-03-02 01:53:30,638 - py_hids_app_delete - INFO - Checking the ratios...
+2016-03-02 01:53:30,638 - py_hids_app_delete - INFO - Unable to generate the chart, there are no ratios yet
+
+
+2016-03-02 01:54:51,750 - py_hids_app_delete - INFO - Starting process to plot the ratios
+2016-03-02 01:54:51,750 - py_hids_app_delete - INFO - Checking the ratios...
+2016-03-02 01:54:51,751 - py_hids_app_delete - INFO - Unable to generate the chart, there are no ratios yet
+
+2016-03-02 02:00:38,647 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 02:00:38,647 - py_hids_app - INFO - Checking out the ratios...
+2016-03-02 02:00:38,647 - py_hids_app - INFO - An error occurred while checking the ratios
+
+
+2016-03-02 02:00:38,648 - py_hids_app - INFO - Traceback (most recent call last):
+  File "C:/Users/Dani/PycharmProjects/SSII_Proyecto_1/chart_main.py", line 61, in main_chart
+    and ratio_cursor.fetchone()[0] is not None):
+TypeError: 'NoneType' object is not subscriptable
+
+
+
+2016-03-02 02:01:11,446 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 02:01:11,448 - py_hids_app - INFO - Checking out the ratios...
+2016-03-02 02:01:42,673 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 02:01:42,673 - py_hids_app - INFO - Checking out the ratios...
+2016-03-02 02:01:42,673 - py_hids_app - INFO - Processing the ratios...
+2016-03-02 02:01:42,674 - py_hids_app - INFO - Generating axis for the chart...
+2016-03-02 02:01:42,860 - py_hids_app - INFO - Adding the ratios to the chart...
+2016-03-02 02:01:42,862 - py_hids_app - INFO - Labeling the axis...
+2016-03-02 02:01:42,862 - py_hids_app - INFO - Adding title...
+2016-03-02 02:01:42,863 - py_hids_app - INFO - Generating and saving the chart...
+2016-03-02 02:01:43,005 - py_hids_app - INFO - Chart created with name '2016-03-02 02.01.42 - Ratio chart.png'
+2016-03-02 02:01:59,001 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 02:01:59,001 - py_hids_app - INFO - Checking out the ratios...
+2016-03-02 02:01:59,001 - py_hids_app - INFO - Processing the ratios...
+2016-03-02 02:01:59,002 - py_hids_app - INFO - Generating axis for the chart...
+2016-03-02 02:01:59,181 - py_hids_app - INFO - Adding the ratios to the chart...
+2016-03-02 02:01:59,183 - py_hids_app - INFO - Labeling the axis...
+2016-03-02 02:01:59,183 - py_hids_app - INFO - Adding title...
+2016-03-02 02:01:59,183 - py_hids_app - INFO - Generating and saving the chart...
+2016-03-02 02:01:59,318 - py_hids_app - INFO - Chart created with name '2016-03-02 02.01.59 - Ratio chart.png'
+2016-03-02 02:02:25,710 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 02:02:25,711 - py_hids_app - INFO - Checking out the ratios...
+2016-03-02 02:02:25,711 - py_hids_app - INFO - Processing the ratios...
+2016-03-02 02:02:25,712 - py_hids_app - INFO - Generating axis for the chart...
+2016-03-02 02:02:25,900 - py_hids_app - INFO - Adding the ratios to the chart...
+2016-03-02 02:02:25,902 - py_hids_app - INFO - Labeling the axis...
+2016-03-02 02:02:25,902 - py_hids_app - INFO - Adding title...
+2016-03-02 02:02:25,902 - py_hids_app - INFO - Generating and saving the chart...
+2016-03-02 02:02:26,045 - py_hids_app - INFO - Chart created with name '2016-03-02 02.02.25 - Ratio chart.png'
+
+
+2016-03-02 02:02:31,380 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 02:02:31,381 - py_hids_app - INFO - Checking out the ratios...
+2016-03-02 02:02:31,381 - py_hids_app - INFO - Processing the ratios...
+2016-03-02 02:02:31,381 - py_hids_app - INFO - Generating axis for the chart...
+2016-03-02 02:02:31,580 - py_hids_app - INFO - Adding the ratios to the chart...
+2016-03-02 02:02:31,582 - py_hids_app - INFO - Labeling the axis...
+2016-03-02 02:02:31,582 - py_hids_app - INFO - Adding title...
+2016-03-02 02:02:31,583 - py_hids_app - INFO - Generating and saving the chart...
+2016-03-02 02:02:31,732 - py_hids_app - INFO - Chart created with name '2016-03-02 02.02.31 - Ratio chart.png'
+
+
+2016-03-02 10:19:09,342 - py_hids_app - INFO - Starting process to plot the ratios
+2016-03-02 10:19:09,384 - py_hids_app - INFO - Checking out the ratios...
+2016-03-02 10:19:10,778 - py_hids_app - INFO - Processing the ratios...
+2016-03-02 10:19:10,781 - py_hids_app - INFO - Generating axis for the chart...
+2016-03-02 10:19:12,716 - py_hids_app - INFO - Adding the ratios to the chart...
+2016-03-02 10:19:12,729 - py_hids_app - INFO - Labeling the axis...
+2016-03-02 10:19:12,730 - py_hids_app - INFO - Adding title...
+2016-03-02 10:19:12,731 - py_hids_app - INFO - Generating and saving the chart...
+2016-03-02 10:19:14,132 - py_hids_app - INFO - Chart created with name '2016-03-02 10.19.12 - Ratio chart.png'
+
+
