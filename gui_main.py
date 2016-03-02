@@ -46,7 +46,7 @@ def gui_main():
             globals()['config'] = yaml.load(open(str(app_name) + ".yaml", 'r'))
             index = 1
 
-            for row in sorted(list(set(globals()['config'][option]))):
+            for row in list(set(globals()['config'][option])):
                 listbox.insert(index, row.replace("\\\\","\\"))
                 index += 1
 
@@ -99,15 +99,14 @@ def gui_main():
 
     def remove_scan_dir_callback():  # Method to remove the items from the listbox and the scan_directories
         items = sd_list.curselection()
-        for index in items:
+        for index in reversed(items):
             item = sd_list.get(index)
             sd_list.delete(index)
             split = item.split('\\')
             reconstruct = "\\\\".join(split)
-            try:
-                globals()['config']['scan_directories'].remove(reconstruct)
-            except:
-                return -1
+            directories = globals()['config']['scan_directories']
+            if reconstruct in directories:
+                directories.remove(reconstruct)
 
     # Button to remove the selected paths to be scanned
     sd_list_remove_button = tk.Button(root, text="Remove selected directories", command=remove_scan_dir_callback)
@@ -164,15 +163,14 @@ def gui_main():
 
     def remove_exclude_file_callback():  # Method to remove the items from the listbox and the scan_directories
         items = ef_list.curselection()
-        for index in items:
+        for index in reversed(items):
             item = ef_list.get(index)
             ef_list.delete(index)
             split = item.split('\\')
             reconstruct = "\\\\".join(split)
-            try:
-                globals()['config']['excluded_files'].remove(reconstruct)
-            except:
-                return -1
+            directories = globals()['config']['excluded_files']
+            if reconstruct in directories:
+                directories.remove(reconstruct)
 
     # Button to remove the selected files to be excluded
     ef_list_remove_button = tk.Button(root, text="Remove selected files", command=remove_exclude_file_callback)
@@ -234,10 +232,9 @@ def gui_main():
             ee_list.delete(index)
             split = item.split('\\')
             reconstruct = "\\\\".join(split)
-            try:
-                globals()['config']['exclude_extension'].remove(reconstruct)
-            except:
-                return -1
+            directories = globals()['config']['exclude_extension']
+            if reconstruct in directories:
+                directories.remove(reconstruct)
 
     # Button to remove the selected files to be excluded
     ee_list_remove_button = tk.Button(root, text="Remove selected extensions", command=remove_exclude_extension_callback)
@@ -253,7 +250,7 @@ def gui_main():
             # As we are going to insery the path in a yaml file, we need to scape the \ replacing them by \\
             globals()['config']['exclude_extension'].append(str(exclude_extension.replace("\\", "\\\\")))
 
-            # We clear the tetxt
+            # We clear the text
             ee_entry.delete(0, len(ee_entry.get()))
             ee_entry.insert(0, "")
         else:

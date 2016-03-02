@@ -1,6 +1,3 @@
-exclude_extensions:
-- .pdf
-excluded_files:
-- C:\\Users\\Dani\\Desktop\\PRUEBA_HIDS\\Credenciales.txt
-scan_directories:
-- C:\Users\Dani\Desktop\PRUEBA_HIDS
+exclude_extensions: []
+excluded_files: []
+scan_directories: []
